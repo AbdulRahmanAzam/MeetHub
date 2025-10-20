@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Box,
@@ -26,11 +26,7 @@ const Polls = () => {
   const [selectedOptions, setSelectedOptions] = useState({});
   const { user } = useAuth();
 
-  useEffect(() => {
-    loadPolls();
-  }, [user]);
-
-  const loadPolls = async () => {
+  const loadPolls = useCallback(async () => {
     try {
       const response = await pollService.getAll({
         society: user.society,
@@ -42,7 +38,11 @@ const Polls = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user.society]);
+
+  useEffect(() => {
+    loadPolls();
+  }, [loadPolls]);
 
   const handleVote = async (pollId, optionId) => {
     try {

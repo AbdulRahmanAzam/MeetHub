@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Box,
@@ -19,11 +19,7 @@ const Announcements = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  useEffect(() => {
-    loadAnnouncements();
-  }, [user]);
-
-  const loadAnnouncements = async () => {
+  const loadAnnouncements = useCallback(async () => {
     try {
       const response = await announcementService.getAll({
         society: user.society
@@ -34,7 +30,11 @@ const Announcements = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user.society]);
+
+  useEffect(() => {
+    loadAnnouncements();
+  }, [loadAnnouncements]);
 
   const getPriorityColor = (priority) => {
     const colors = {

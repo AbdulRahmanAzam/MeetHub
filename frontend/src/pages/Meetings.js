@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Box,
@@ -22,11 +22,7 @@ const Meetings = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  useEffect(() => {
-    loadMeetings();
-  }, [user]);
-
-  const loadMeetings = async () => {
+  const loadMeetings = useCallback(async () => {
     try {
       const response = await meetingService.getAll({
         society: user.society
@@ -37,7 +33,11 @@ const Meetings = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user.society]);
+
+  useEffect(() => {
+    loadMeetings();
+  }, [loadMeetings]);
 
   const handleRespond = async (meetingId, status) => {
     try {

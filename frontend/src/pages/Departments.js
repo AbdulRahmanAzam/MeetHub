@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Box,
   Typography,
   Paper,
-  TreeView,
-  TreeItem,
   Button,
   Chip
 } from '@mui/material';
+import { TreeView, TreeItem } from '@mui/lab';
 import {
   ExpandMore,
   ChevronRight,
@@ -23,11 +22,7 @@ const Departments = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  useEffect(() => {
-    loadDepartments();
-  }, [user]);
-
-  const loadDepartments = async () => {
+  const loadDepartments = useCallback(async () => {
     if (!user.society) {
       setLoading(false);
       return;
@@ -41,7 +36,11 @@ const Departments = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user.society]);
+
+  useEffect(() => {
+    loadDepartments();
+  }, [loadDepartments]);
 
   const buildDepartmentTree = (departments, parentId = null) => {
     return departments

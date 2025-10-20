@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Box,
@@ -20,11 +20,7 @@ const Rooms = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  useEffect(() => {
-    loadRooms();
-  }, [user]);
-
-  const loadRooms = async () => {
+  const loadRooms = useCallback(async () => {
     if (!user.society) {
       setLoading(false);
       return;
@@ -38,7 +34,11 @@ const Rooms = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user.society]);
+
+  useEffect(() => {
+    loadRooms();
+  }, [loadRooms]);
 
   if (loading) {
     return <Container><Typography>Loading...</Typography></Container>;
